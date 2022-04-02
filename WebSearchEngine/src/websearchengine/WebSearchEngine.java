@@ -2,9 +2,10 @@ package websearchengine;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class WebSearchEngine {
-
+	static Scanner obj = new Scanner(System.in);
 	public static void main(String[] args) {
 		InvertedIndex invertedIndex = new InvertedIndex();
 
@@ -22,10 +23,10 @@ public class WebSearchEngine {
 		invertedIndex.createDictionary();
 		System.out.println("Number of words: " + invertedIndex.getDictionary().size());
 		ArrayList<String> dictionary = invertedIndex.getDictionary();
-		/*
-		 * for (int i = 0; i < dictionary.size(); i++) {
-		 * System.out.println(dictionary.get(i)); }
-		 */
+		
+		  for (int i = 0; i < dictionary.size(); i++) {
+		  System.out.println(dictionary.get(i)); }
+		 
 
 		// Storing the trie object in output file
 		invertedIndex.createSerializableFile();
@@ -52,6 +53,11 @@ public class WebSearchEngine {
 
 //		if not found dictionary - edit distance
 
+		//Editdistance
+		Editdistance editdistance = new Editdistance();
+		System.out.println("Enter a word that needs to be searched");
+		String uword = obj.next();
+		Editdistance.searching(dictionary, uword);
 	}
 
 }
