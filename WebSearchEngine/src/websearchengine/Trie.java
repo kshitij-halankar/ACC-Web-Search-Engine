@@ -52,7 +52,7 @@ public class Trie implements java.io.Serializable {
 			  pCrawl.wordObject.insertIndex(document);
 		}else {
 			pCrawl.isEndOfWord = true;
-			pCrawl.wordObject = new IndexObject();
+			pCrawl.wordObject = new IndexObject(key);
 			pCrawl.wordObject.insertIndex(document);
 		}
 	
