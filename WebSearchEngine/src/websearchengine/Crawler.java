@@ -17,105 +17,36 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 public class Crawler {
 
 //	public static HashMap<String, String> links = new HashMap<>();
+	public static final int MAX_CRAWL_LIMIT = 10;
 	private static HashSet<String> linksToCrawl = new HashSet<>();
 	private static List<String> visitedLinks = new ArrayList<>();
 	private static final String urlFinderPattern = "(http|https):\\/\\/([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])";
 	private static final Pattern urlPattern = Pattern.compile(urlFinderPattern);
 	private static final String currentPath = System.getProperty("user.dir");
 	private static final String webFile = currentPath + "Temp.html";
-	private static final String skipLinks = "(http|https)?:\\/\\/.*(.js|.png|.jpg|.docx|.pptx|.jpeg)";
-
-	public static InvertedIndex invertedIndex;
+	private static final String skipLinks = "(http|https)?:\\/\\/.*(.js|.png|.jpg|.docx|.pptx|.jpeg|.xml)";
 
 	public static void main(String[] args) {
-		invertedIndex = new InvertedIndex();
-		String urlStr = "https://www.tutorialspoint.com";
-		crawl(urlStr);
-		System.out.println(linksToCrawl.size());
-		
-		
-		//Printing the words present in the dictionary
-		invertedIndex.createDictionary();
-		System.out.println("Number of words: " + invertedIndex.getDictionary().size());
-		ArrayList<String> dictionary = invertedIndex.getDictionary();
-		/*
-		for (int i = 0; i < dictionary.size(); i++) {
-			System.out.println(dictionary.get(i));
-		}*/
+//		String urlStr = "https://www.tutorialspoint.com";
 
-		// Storing the trie object in output file
-		invertedIndex.createSerializableFile();
+//		String urlToCrawl = "https://www.geeksforgeeks.org/data-structures";
+//		Crawler c = new Crawler();
+//		InvertedIndex invertedIndex = new InvertedIndex();
+//		c.crawl(urlToCrawl, invertedIndex);
+//		System.out.println(linksToCrawl.size());
 
-		// Taking input from serializable file
-		Trie inputTrie = invertedIndex.readFromSerializableFile();
-
-		// Printing the links in which the word tutorialspoint is present along with the frequency
-		if (inputTrie.search("tutorialspoint", inputTrie.root) == true) {
-			HashMap<String, Integer> tempMap = inputTrie.find("tutorialspoint", inputTrie.root).wordObject
-					.getindicesHolder();
-			for (String strKey : tempMap.keySet()) {
-				System.out.print("tutorialspoint" + " : Key  : " + strKey + "........");
-				System.out.print(tempMap.get(strKey) + "\n");
-			}
-		} else {
-			System.out.println("Not Found");
-		}
 //		for (String link : links)
 //			System.out.println(link);
 	}
 
-//	public static crawl2() {
-//		try {
-//			System.out.println("visited: " + urlStr);
-//			URL url = new URL(urlStr);
-//			String superPattern = "(http|https):\\/\\/([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])";
-//			Pattern superPat = Pattern.compile(superPattern);
-//			String line;
-//			// check logic
-//			if (!links.isEmpty()) {
-//				links.remove(links.iterator().next());
-//			}
-//			BufferedReader readr = new BufferedReader(new InputStreamReader(url.openStream()));
-////			System.out.println(readr.readLine());
-//			while ((line = readr.readLine()) != null) {
-////				System.out.println(line);
-//				Matcher m = superPat.matcher(line);
-//				while (m.find()) {
-////					System.out.println(m.group());
-////					links.put(m.group(),null);
-//					String link = m.group();
-//					if (!visitedLinks.contains(link)) {
-//						links.add(m.group());
-//					}
-//				}
-//			}
-//			System.out.println(links.size());
-//			String nextLink = links.iterator().next();
-//			if (links.size() < 2000 && !visitedLinks.contains(nextLink)) {
-//				if (isValidURL(nextLink)) {
-//					System.out.println("nextLink " + nextLink);
-//					visitedLinks.add(nextLink);
-//					crawl(nextLink);
-//				} else {
-//					visitedLinks.add(nextLink);
-//					links.remove(nextLink);
-//					nextLink = links.iterator().next();
-//					crawl(nextLink);
-//				}
-//			}
-//		} catch (Exception e) {
-//			System.out.println(e.toString());
-//			crawl(links.iterator().next());
-//		}
-//	}
-
-	public static void crawl(String urlStr) {
+	public void crawl(String urlStr, InvertedIndex invertedIndex) {
 		try {
-			// System.out.println("visiting: " + urlStr);
+//			System.out.println("visiting: " + urlStr);
 			URL url = new URL(urlStr); // create new url to visit
 			String line;
 			// check logic
@@ -136,14 +67,14 @@ public class Crawler {
 				Matcher urlMatcher = urlPattern.matcher(line);
 				while (urlMatcher.find()) {
 					String link = urlMatcher.group();
-					if (!visitedLinks.contains(link) && linksToCrawl.size() <= 2000) {
+					if (!visitedLinks.contains(link) && linksToCrawl.size() <= MAX_CRAWL_LIMIT) {
 						linksToCrawl.add(link);
 					}
 				}
 			}
 
 			// store all data into temporary html file
-			if (!webPage.isEmpty()) {
+			if (webPage != null && webPage.length() > 0) {
 				String webPageContent = webPage.toString();
 //				PrintWriter pWriter = new PrintWriter(webFile);
 //				pWriter.write(webPageContent);
@@ -154,11 +85,13 @@ public class Crawler {
 				// File htmlFile = new File(webFile);
 				// if (!htmlFile.isDirectory() && htmlFile.isFile()) {
 //				String fileContents = Jsoup.parse(htmlFile, "UTF-8").text();
-				String fileContents = Jsoup.parse(webPageContent).text();
+				Document webDoc = Jsoup.parse(webPageContent, "UTF-8");
+				String fileContents = webDoc.body().text();
 
-				String[] words = fileContents.split(" ");
-
+				// apply regex to get words and exclude any special characters
+				String[] words = fileContents.split("\\W+");
 				for (String word : words) {
+//					System.out.println(word);
 					try {
 						invertedIndex.insertObject(word, urlStr);
 					} catch (Exception e) {
@@ -172,8 +105,7 @@ public class Crawler {
 			}
 
 			// now crawl next page
-
-			crawlNext(linksToCrawl.iterator().next());
+			crawlNext(linksToCrawl.iterator().next(), invertedIndex);
 //			String nextLink = linksToCrawl.iterator().next();
 //			if (!visitedLinks.contains(nextLink)) {
 //				if (isValidURL(nextLink)) {
@@ -190,33 +122,23 @@ public class Crawler {
 		} catch (Exception e) {
 			System.out.println(e.toString());
 			linksToCrawl.remove(urlStr);
-			crawlNext(linksToCrawl.iterator().next());
+			crawlNext(linksToCrawl.iterator().next(), invertedIndex);
 			// crawl(linksToCrawl.iterator().next());
 		}
 	}
 
-	public static void crawlNext(String nextLink) {
+	public void crawlNext(String nextLink, InvertedIndex invertedIndex) {
 		linksToCrawl.remove(nextLink);
 		if (nextLink.matches(skipLinks)) {
-			crawlNext(linksToCrawl.iterator().next());
+			crawlNext(linksToCrawl.iterator().next(), invertedIndex);
 		} else if (visitedLinks.contains(nextLink)) {
-			crawlNext(linksToCrawl.iterator().next());
+			crawlNext(linksToCrawl.iterator().next(), invertedIndex);
 		} else {
-			if (visitedLinks.size() <= 100) {
+			if (visitedLinks.size() <= MAX_CRAWL_LIMIT) {
 				visitedLinks.add(nextLink);
-				crawl(nextLink);
+				crawl(nextLink, invertedIndex);
 			}
 		}
 	}
-
-//	public static boolean isValidURL(String link) {
-//		
-//		System.out.println("link to validate: " + link);
-//		if (link.matches(avoidedLinks)) {
-//			System.out.println("inside");
-//			return false;
-//		}
-//		return true;
-//	}
 
 }
