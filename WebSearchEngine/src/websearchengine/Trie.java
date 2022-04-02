@@ -18,7 +18,7 @@ class TrieNode implements java.io.Serializable {
 		for (int i = 0; i < ALPHABET_SIZE; i++)
 			children[i] = null;
 	}
-	
+
 }
 
 public class Trie implements java.io.Serializable {
@@ -26,7 +26,6 @@ public class Trie implements java.io.Serializable {
 	// Alphabet size (# of symbols)
 
 	// trie node
-
 	TrieNode root;
 	ArrayList<String> dictionary;
 
@@ -48,14 +47,14 @@ public class Trie implements java.io.Serializable {
 			pCrawl = pCrawl.children[index];
 		}
 
-		if(pCrawl.isEndOfWord) {
-			  pCrawl.wordObject.insertIndex(document);
-		}else {
+		if (pCrawl.isEndOfWord) {
+			pCrawl.wordObject.insertIndex(document);
+		} else {
 			pCrawl.isEndOfWord = true;
 			pCrawl.wordObject = new IndexObject();
 			pCrawl.wordObject.insertIndex(document);
 		}
-	
+
 		// System.out.println(noOfWords);
 	}
 
@@ -78,7 +77,7 @@ public class Trie implements java.io.Serializable {
 		// System.out.println(pCrawl.index);
 		return (pCrawl.isEndOfWord);
 	}
-	
+
 	public TrieNode find(String key, TrieNode root) {
 		int level;
 		int length = key.length();
@@ -99,13 +98,13 @@ public class Trie implements java.io.Serializable {
 	}
 
 	public void createDictionary(TrieNode root, ArrayList<Character> str, int level) {
-		
+
 		if (root.isEndOfWord) {
 			String word = "";
 			for (int i = 0; i < level; i++) {
 				word = word + str.get(i);
 			}
-			//System.out.println(word);
+			// System.out.println(word);
 			dictionary.add(word);
 		}
 
@@ -122,7 +121,10 @@ public class Trie implements java.io.Serializable {
 			}
 		}
 	}
-	
+
+	public void setIndexObject(TrieNode root, IndexObject object) {
+		root.wordObject = object;
+	}
 
 	// Driver
 	public static void main(String args[]) {
