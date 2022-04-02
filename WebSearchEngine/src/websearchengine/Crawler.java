@@ -121,7 +121,12 @@ public class Crawler {
 			}
 
 			// store all data into temporary html file
+<<<<<<< HEAD
 			if (webPage != null && webPage.length() > 0) {
+=======
+//			if (!webPage.isEmpty()) {
+			if (webPage.length() > 0) {
+>>>>>>> f4a1b53eb9a1c713c2aae07d4656919e4723acd4
 				String webPageContent = webPage.toString();
 //				PrintWriter pWriter = new PrintWriter(webFile);
 //				pWriter.write(webPageContent);
