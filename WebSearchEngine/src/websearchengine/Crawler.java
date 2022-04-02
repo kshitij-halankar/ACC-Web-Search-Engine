@@ -1,5 +1,7 @@
 package websearchengine;
 
+import static websearchengine.Functions.quickSort;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,7 +34,37 @@ public class Crawler {
 	private static final String skipLinks = "(http|https)?:\\/\\/.*(.js|.png|.jpg|.docx|.pptx|.jpeg|.xml)";
 
 	public static void main(String[] args) {
-//		String urlStr = "https://www.tutorialspoint.com";
+		invertedIndex = new InvertedIndex();
+		String urlStr = "https://www.geeksforgeeks.org/data-structures/";
+		crawl(urlStr);
+		System.out.println(linksToCrawl.size());
+
+		// Printing the words present in the dictionary
+		invertedIndex.createDictionary();
+		for (int i = 0; i < invertedIndex.getDictionary().size(); i++) {
+			if (invertedIndex.trie.search(invertedIndex.trie.dictionary.get(i), invertedIndex.trie.root)) {
+
+				IndexObject indexObject = invertedIndex.trie.find(invertedIndex.trie.dictionary.get(i),
+						invertedIndex.trie.root).wordObject;
+				quickSort(indexObject, 0, indexObject.indicesHolder.size() - 1);
+				invertedIndex.trie.setIndexObject(invertedIndex.trie.root, indexObject);
+				
+				for (int j = 0; j < indexObject.indicesHolder.size(); j++) {
+					System.out.println(
+							invertedIndex.trie.dictionary.get(i) + " : Key  : " + indexObject.indicesHolder.get(j).url
+									+ "........" + indexObject.indicesHolder.get(j).frequency);
+				}
+
+			}
+
+		}
+
+		System.out.println("Number of words: " + invertedIndex.getDictionary().size());
+		ArrayList<String> dictionary = invertedIndex.getDictionary();
+		/*
+		 * for (int i = 0; i < dictionary.size(); i++) {
+		 * System.out.println(dictionary.get(i)); }
+		 */
 
 //		String urlToCrawl = "https://www.geeksforgeeks.org/data-structures";
 //		Crawler c = new Crawler();
@@ -40,6 +72,21 @@ public class Crawler {
 //		c.crawl(urlToCrawl, invertedIndex);
 //		System.out.println(linksToCrawl.size());
 
+		// Taking input from serializable file
+		Trie inputTrie = invertedIndex.readFromSerializableFile();
+
+		// Printing the links in which the word tutorialspoint is present along with the
+		// frequency
+		if (inputTrie.search("geeksforgeeks", inputTrie.root) == true) {
+			ArrayList<LinkIndex> tempMap = inputTrie.find("geeksforgeeks", inputTrie.root).wordObject
+					.getindicesHolder();
+			for (LinkIndex temp : tempMap) {
+				System.out.print("geeksforgeeks" + " : Key  : " + temp.url + "........");
+				System.out.print(temp.frequency + "\n");
+			}
+		} else {
+			System.out.println("Not Found");
+		}
 //		for (String link : links)
 //			System.out.println(link);
 	}

@@ -3,52 +3,42 @@ package websearchengine;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class IndexObject implements java.io.Serializable{
-    private String word;
-    private HashMap<String, Integer> indicesHolder = new HashMap<>();
-    public ArrayList<String> documentName = new ArrayList<>();
-    public ArrayList<Integer> freq = new ArrayList<>();
+public class IndexObject implements java.io.Serializable {
+	
+	public ArrayList<LinkIndex> indicesHolder = new ArrayList<LinkIndex>();
 
-    IndexObject(String word){
-        this.word = word;
-    }
-    public void insertIndex(String document) {
-//        int frequency;
-//        if(indicesHolder.containsKey(document)) {
-//            frequency = indicesHolder.get(document);
-//
-//        }
-//        else
-//            frequency = 0;
-//
-//        frequency = frequency + 1;
-//        indicesHolder.put(document, frequency);
+	public void insertIndex(String document) {
+		boolean urlFound = false;
+		
+		if (indicesHolder.size() == 0) {
+			LinkIndex ind = new LinkIndex();
+			ind.url = document;
+			ind.frequency = 1;
+			indicesHolder.add(ind);
+		} else {
+			for (int i = 0; i < indicesHolder.size(); i++) {
+				if (indicesHolder.get(i).url.equals(document)) {
+					LinkIndex ind = new LinkIndex();
+					ind.url = document;
+					ind.frequency = indicesHolder.get(i).frequency + 1;
+					indicesHolder.remove(i);
+					indicesHolder.add(ind);
+					urlFound = true;
+					break;
+				}
+			}
+			if (!urlFound) {
+				LinkIndex ind = new LinkIndex();
+				ind.url = document;
+				ind.frequency = 1;
+				indicesHolder.add(ind);
+			}
+		}
 
-        int frequency1;
-        if(documentName.contains(document)) {
-            int index = documentName.indexOf(document);
-            frequency1 = freq.get(index);
-            frequency1++;
-            freq.remove(index);
-            freq.add(index,frequency1);
-        }
-        else{
-            frequency1 = 1;
-            documentName.add(document);
-            freq.add(frequency1);
-        }
+	}
 
-
-    }
-
-    public String getWord() {
-        return word;
-    }
-
-    public HashMap<String, Integer> getindicesHolder() {
-        return indicesHolder;
-    }
-
-
+	public ArrayList<LinkIndex> getindicesHolder() {
+		return indicesHolder;
+	}
 
 }
