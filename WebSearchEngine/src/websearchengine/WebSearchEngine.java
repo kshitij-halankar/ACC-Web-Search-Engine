@@ -10,7 +10,7 @@ public class WebSearchEngine {
 	public static void main(String[] args) {
 		InvertedIndex invertedIndex = new InvertedIndex();
 		WebSearchEngine wb = new WebSearchEngine();
-		//wb.search(invertedIndex);
+		// wb.search(invertedIndex);
 	}
 
 	public void crawl(InvertedIndex invertedIndex) {
@@ -26,8 +26,8 @@ public class WebSearchEngine {
 
 	public ArrayList<LinkIndex> search(InvertedIndex invertedIndex, String searchWord) {
 		Scanner sc = new Scanner(System.in);
-		//System.out.println("Enter word to search: ");
-		//String searchWord = sc.next();
+		// System.out.println("Enter word to search: ");
+		// String searchWord = sc.next();
 		if (searchWord.equals("EXIT")) {
 			System.out.println("exiting search!");
 			System.exit(0);
@@ -35,7 +35,7 @@ public class WebSearchEngine {
 		String[] searchWords = searchWord.split("\\W+");
 		ArrayList<LinkIndex> outputLinks = searchInCache(invertedIndex, searchWord, false, 0);
 		return outputLinks;
-		
+
 //		int countMore = 0;
 //		while (true) {
 //			System.out.println("Do you want more results? (y/n)");
@@ -59,7 +59,7 @@ public class WebSearchEngine {
 			for (LinkIndex temp : cachedLinks) {
 				System.out.print(searchWord + " : Key  : " + temp.url + "........");
 				System.out.print(temp.frequency + "\n");
-				
+
 			}
 			return cachedLinks;
 		} else {
@@ -135,8 +135,13 @@ public class WebSearchEngine {
 
 	// if not found dictionary - spell check using edit distance
 	public void checkSpelling(ArrayList<String> dictionary, String searchWord) {
+		ArrayList<String> finallist = new ArrayList<>();
 		Editdistance editdistance = new Editdistance();
-		Editdistance.searching(dictionary, searchWord);
+		finallist = Editdistance.searching(dictionary, searchWord);
+		System.out.println("This word is not present in the dictionary, some suggested words are given below ");
+		for (String a : finallist) {
+			System.out.println(a);
+		}
 	}
 
 }

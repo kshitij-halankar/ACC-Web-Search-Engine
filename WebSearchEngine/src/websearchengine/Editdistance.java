@@ -12,7 +12,7 @@ public class Editdistance {
 	public static List<String> links = new ArrayList<>();
 //	static Scanner obj = new Scanner(System.in);
 
-	public static void searching(ArrayList<String> dictionary, String word) {
+	public static ArrayList<String> searching(ArrayList<String> dictionary, String word) {
 
 		// HashMap<Integer, String> people = new HashMap<Integer, String>();
 
@@ -25,9 +25,8 @@ public class Editdistance {
 			if (editDistance(s, word) == 1) {
 				listedited.add(s);
 			}
-
 		}
-		System.out.println(listedited);
+		return listedited;
 	}
 
 	public static int editDistance(String word1, String word2) {
