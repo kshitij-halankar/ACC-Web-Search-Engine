@@ -15,7 +15,7 @@ import org.jsoup.select.Elements;
 
 public class Crawler {
 
-	public static int MAX_CRAWL_LIMIT = 30;
+	public static int MAX_CRAWL_LIMIT = 10;
 	private static HashSet<String> linksToCrawl = new HashSet<>();
 	private static List<String> visitedLinks = new ArrayList<>();
 //	private static final String urlFinderPattern = "(http|https):\\/\\/([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:\\/~+#-]*[\\w@?^=%&\\/~+#-])";
