@@ -64,21 +64,24 @@ public class GUI implements ActionListener {
 
 		// message after button clicked
 		display = new JLabel();
-		display.setBounds(10, 110, 500, 200);
+		display.setBounds(10, 110, 800, 200);
 		panel.add(display);
 
 		display1 = new JLabel();
-		display1.setBounds(10, 350, 500, 25);
+		display1.setBounds(10, 350, 800, 25);
 		panel.add(display1);
 
 		frame.setVisible(true);
-		yes = new JTextField(2);
-		yes.setBounds(200, 350, 50, 25);
-		panel.add(yes);
+//		yes = new JTextField(2);
+//		yes.setBounds(200, 350, 50, 25);
+//		panel.add(yes);
 
 		btn1 = new JButton("moreResults");
-		btn1.setBounds(260, 350, 20, 25);
+		btn1.setBounds(260, 350, 160, 25);
 		btn1.addActionListener(new GUI());
+		btn1.setText("Click for More Results");
+		btn1.setEnabled(false);
+		btn1.setVisible(false);
 		panel.add(btn1);
 
 	}
@@ -87,50 +90,50 @@ public class GUI implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if (((AbstractButton) e.getSource()).getText().equals("Search")) {
+			countMore = 0;
 			String searchWord = userText.getText();
-
 			ArrayList<LinkIndex> outputLinks = wb.search(invertedIndex, searchWord);
-
 			String op = "<html>";
-			for (LinkIndex link : outputLinks) {
-				op = op + "<br><br>" + link.url + "-----" + link.frequency;
-				System.out.println("maal:" + link.url);
-				// display1.setText(link.url);
-			}
-			op += "</html>";
-			System.out.println(op);
-
-			display.setText(op);
-			display1.setText("Do you want more results? (y/n)");
-		}
-		if (((AbstractButton) e.getSource()).getText().equals("moreResults")) {
-			// while (true) {
-
-			// System.out.println("Do you want more results? (y/n)");
-
-			String more = yes.getText();
-			String searchWord = userText.getText();
-
-			if (more.equals("y")) {
-				countMore += 5;
-				System.out.println(searchWord);
-				String op = "<html>";
-				ArrayList<LinkIndex> outputLinks = wb.searchInCache(invertedIndex, searchWord, true, countMore);
-				if (outputLinks == null) {
-					display.setText("No more results");
-				} else {
-					for (LinkIndex link : outputLinks) {
-						op = op + "<br><br>" + link.url + "-----" + link.frequency;
-						System.out.println("maal:" + link.url);
-						// display1.setText(link.url);
-					}
-					op += "</html>";
-					System.out.println(op);
-
-					display.setText(op);
+			if (outputLinks != null) {
+				for (LinkIndex link : outputLinks) {
+					op = op + "<br><br><a href=\"" + link.url + "\">" + link.url + "</a>-----" + link.frequency;
+					System.out.println("" + link.url);
+					// display1.setText(link.url);
 				}
+				op += "</html>";
+				System.out.println(op);
+				display.setText(op);
+				display1.setText("Do you want more results? (y/n)");
+				btn1.setEnabled(true);
+				btn1.setVisible(true);
+			} else {
+				System.out.println(invertedIndex.getDictionary().size());
+				ArrayList<String> suggestions = wb.checkSpelling(invertedIndex.getDictionary(), searchWord);
+				// System.out.println(suggestions);
+				display.setText("No results found for the word entered. some suggested words are: " + suggestions);
+			}
+		}
 
-				// }
+		if (((AbstractButton) e.getSource()).getText().equals("Click for More Results")) {
+			String searchWord = userText.getText();
+			countMore += 5;
+			System.out.println(searchWord);
+			String op = "<html>";
+			ArrayList<LinkIndex> outputLinks = wb.searchInCache(invertedIndex, searchWord, true, countMore);
+			if (outputLinks == null) {
+				display.setText("No more results");
+				display1.setVisible(false);
+//				btn1.setEnabled(true);
+				btn1.setVisible(false);
+			} else {
+				for (LinkIndex link : outputLinks) {
+					op = op + "<br><br><a href=\"" + link.url + "\">" + link.url + "</a>-----" + link.frequency;
+					System.out.println("" + link.url);
+					// display1.setText(link.url);
+				}
+				op += "</html>";
+				System.out.println(op);
+				display.setText(op);
 			}
 
 		}
