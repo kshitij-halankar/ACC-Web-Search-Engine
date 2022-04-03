@@ -6,8 +6,10 @@ import java.util.Scanner;
 public class WebSearchEngine {
 	static Scanner obj = new Scanner(System.in);
 	static Cache searchCache = new Cache();
+	static InvertedIndex invertedIndex;
 
 	public static void main(String[] args) {
+		InvertedIndex invertedIndex;
 		WebSearchEngine wb = new WebSearchEngine();
 		wb.search();
 	}
@@ -17,7 +19,7 @@ public class WebSearchEngine {
 		Crawler c = new Crawler();
 		c.MAX_CRAWL_LIMIT = 100;
 		c.crawl(urlToCrawl, invertedIndex); // Storing the trie object in output file
-		System.out.println(c.actualCrawl);
+//		System.out.println(c.actualCrawl);
 		invertedIndex.sortLinkIndex(); // sort index
 		invertedIndex.createDictionary(); // store index words in dictionary
 		invertedIndex.createSerializableFile();
@@ -63,17 +65,28 @@ public class WebSearchEngine {
 		}
 	}
 
+	public Trie initializeInvertedIndex() {
+		Trie inputTrie = null;
+		// Taking input from serializable file
+		if (invertedIndex == null) {
+			invertedIndex = new InvertedIndex();
+			try {
+				inputTrie = invertedIndex.readFromSerializableFile();
+				invertedIndex.trie = inputTrie;
+				invertedIndex.sortLinkIndex();
+			} catch (Exception ex) {
+				System.out.println("Error in reading trie file. " + ex.toString());
+			}
+			return inputTrie;
+		} else {
+			return invertedIndex.trie;
+		}
+	}
+
 	// if word not present in cache - check dictionary and fetch from inverted index
 	public ArrayList<LinkIndex> searchInTrie(String searchWord, boolean more, int countMore) {
 		ArrayList<LinkIndex> tempMap2 = null;
-		// Taking input from serializable file
-		InvertedIndex invertedIndex = new InvertedIndex();
-		Trie inputTrie = null;
-		try {
-			inputTrie = invertedIndex.readFromSerializableFile();
-		} catch (Exception ex) {
-			System.out.println("Error in reading trie file. " + ex.toString());
-		}
+		Trie inputTrie = initializeInvertedIndex();
 		if (inputTrie == null) {
 			crawl(invertedIndex); // web crawl - recursion | regex | visited ignore | html to text - Jsoup
 		}
@@ -83,6 +96,11 @@ public class WebSearchEngine {
 		}
 		if (inputTrie.search(searchWord, inputTrie.root) == true) {
 			ArrayList<LinkIndex> tempMap = inputTrie.find(searchWord, inputTrie.root).wordObject.getindicesHolder();
+//			System.out.println("ali index");
+//			for (LinkIndex temp : tempMap) {
+//				System.out.print(searchWord + " : Key  : " + temp.url + "........");
+//				System.out.print(temp.frequency + "\n");
+//			}
 			tempMap2 = new ArrayList<LinkIndex>();
 			if (more) {
 				int pageCount = tempMap.size() < 5 ? 0 : 5 + countMore;

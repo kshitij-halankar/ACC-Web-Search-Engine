@@ -23,13 +23,13 @@ public class Crawler {
 //	private static final String currentPath = System.getProperty("user.dir");
 //	private static final String webFile = currentPath + "Temp.html";
 	private static final String skipLinks = "(http|https)?:\\/\\/.*(.js|.png|.jpg|.docx|.pptx|.jpeg|.xml|.pdf|.gif)";
-	public static int actualCrawl = 0;
+//	public static int actualCrawl = 0;
 //	public static void main(String[] args) {
 //	}
 
 	public void crawl(String urlStr, InvertedIndex invertedIndex) {
 		try {
-			actualCrawl++;
+//			actualCrawl++;
 			Document webDoc = Jsoup.connect(urlStr).get(); // visit URL
 			Elements links = webDoc.select("a"); // retrieve all links from web page
 			for (Element link : links) {
@@ -54,7 +54,7 @@ public class Crawler {
 			// now crawl next page
 			crawlNext(linksToCrawl.iterator().next(), invertedIndex);
 		} catch (Exception e) {
-			actualCrawl--;
+//			actualCrawl--;
 			System.out.println(e.toString());
 			linksToCrawl.remove(urlStr);
 			crawlNext(linksToCrawl.iterator().next(), invertedIndex);
