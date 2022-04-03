@@ -52,7 +52,7 @@ public class InvertedIndex {
 			in.close();
 			fileIn.close();
 		} catch (IOException i) {
-			i.printStackTrace();
+			System.out.println(i.toString());
 			return null;
 		} catch (ClassNotFoundException c) {
 			System.out.println("Trie class not found");
