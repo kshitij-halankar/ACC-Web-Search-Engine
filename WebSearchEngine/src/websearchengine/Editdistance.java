@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class Editdistance {
 //	public static HashMap<String, String> links = new HashMap<>();
 	public static List<String> links = new ArrayList<>();
-	static Scanner obj = new Scanner(System.in);
+//	static Scanner obj = new Scanner(System.in);
 
 	public static void searching(ArrayList<String> dictionary, String word) {
 

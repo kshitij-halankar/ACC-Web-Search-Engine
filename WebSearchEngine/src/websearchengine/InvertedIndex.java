@@ -9,25 +9,27 @@ import java.util.ArrayList;
 
 public class InvertedIndex {
 	Trie trie;
-	InvertedIndex(){
+
+	InvertedIndex() {
 		trie = new Trie();
 		trie.root = new TrieNode();
 		trie.dictionary = new ArrayList<String>();
 	}
-	
+
 	public void insertObject(String word, String urlStr) {
 		trie.insert(word, trie.root, urlStr);
 	}
-	
-	public void createDictionary() {
+
+	public ArrayList<String> createDictionary() {
 		ArrayList<Character> str = new ArrayList<Character>();
 		trie.createDictionary(trie.root, str, 0);
+		return trie.dictionary;
 	}
-	
+
 	public ArrayList<String> getDictionary() {
 		return trie.dictionary;
 	}
-	
+
 	public void createSerializableFile() {
 		try {
 			FileOutputStream fileOut = new FileOutputStream("InvertedIndex.ser");
@@ -40,7 +42,7 @@ public class InvertedIndex {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public Trie readFromSerializableFile() {
 		Trie inputTrie = null;
 		try {
@@ -57,7 +59,18 @@ public class InvertedIndex {
 			c.printStackTrace();
 			return null;
 		}
-		
+
 		return inputTrie;
 	}
+
+	public void sortLinkIndex() {
+		for (int i = 0; i < trie.dictionary.size(); i++) {
+			IndexObject indexObject = trie.find(trie.dictionary.get(i), trie.root).wordObject;
+			// sort as per frequency - merge sort
+			Functions fn = new Functions();
+			fn.quickSort(indexObject, 0, indexObject.indicesHolder.size() - 1);
+			trie.setIndexObject(trie.root, indexObject);
+		}
+	}
+
 }
