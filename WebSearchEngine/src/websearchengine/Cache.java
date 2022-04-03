@@ -43,7 +43,7 @@ public class Cache {
 
 	public int fetchCacheLoc(String searchWord) {
 		for (CacheObject cacheObj : searchCache) {
-			System.out.println("cacheObj.word: " + cacheObj.word + " | " + searchCache.indexOf(cacheObj));
+//			System.out.println("cacheObj.word: " + cacheObj.word + " | " + searchCache.indexOf(cacheObj));
 			if (cacheObj.getCacheWord().equalsIgnoreCase(searchWord)) {
 				return searchCache.indexOf(cacheObj);
 			}
