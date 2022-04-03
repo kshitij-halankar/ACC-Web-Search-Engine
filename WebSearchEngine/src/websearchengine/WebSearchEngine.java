@@ -10,7 +10,7 @@ public class WebSearchEngine {
 	public static void main(String[] args) {
 		InvertedIndex invertedIndex = new InvertedIndex();
 		WebSearchEngine wb = new WebSearchEngine();
-		wb.search(invertedIndex);
+		//wb.search(invertedIndex);
 	}
 
 	public void crawl(InvertedIndex invertedIndex) {
@@ -24,27 +24,29 @@ public class WebSearchEngine {
 		invertedIndex.createSerializableFile();
 	}
 
-	public void search(InvertedIndex invertedIndex) {
+	public ArrayList<LinkIndex> search(InvertedIndex invertedIndex, String searchWord) {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter word to search: ");
-		String searchWord = sc.next();
+		//System.out.println("Enter word to search: ");
+		//String searchWord = sc.next();
 		if (searchWord.equals("EXIT")) {
 			System.out.println("exiting search!");
 			System.exit(0);
 		}
 		String[] searchWords = searchWord.split("\\W+");
-		searchInCache(invertedIndex, searchWord, false, 0);
-		int countMore = 0;
-		while (true) {
-			System.out.println("Do you want more results? (y/n)");
-			String more = sc.next();
-			if (more.equals("y")) {
-				countMore += 5;
-				searchInCache(invertedIndex, searchWord, true, countMore);
-			} else {
-				break;
-			}
-		}
+		ArrayList<LinkIndex> outputLinks = searchInCache(invertedIndex, searchWord, false, 0);
+		return outputLinks;
+		
+//		int countMore = 0;
+//		while (true) {
+//			System.out.println("Do you want more results? (y/n)");
+//			String more = sc.next();
+//			if (more.equals("y")) {
+//				countMore += 5;
+//				searchInCache(invertedIndex, searchWord, true, countMore);
+//			} else {
+//				break;
+//			}
+//		}
 	}
 
 	// search - pattern matching on cache - Boyer Moore
@@ -57,6 +59,7 @@ public class WebSearchEngine {
 			for (LinkIndex temp : cachedLinks) {
 				System.out.print(searchWord + " : Key  : " + temp.url + "........");
 				System.out.print(temp.frequency + "\n");
+				
 			}
 			return cachedLinks;
 		} else {

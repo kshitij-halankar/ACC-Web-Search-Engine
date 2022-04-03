@@ -5,7 +5,9 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,9 +20,12 @@ public class GUI implements ActionListener {
 
 	private static JPanel panel;
 	private static JFrame frame;
-	private static JLabel label, label1, display;
-	private static JTextField userText;
-	private static JButton btn;
+	private static JLabel label, label1, display, display1, display2;
+	private static JTextField userText, yes;
+	private static JButton btn, btn1;
+	WebSearchEngine wb = new WebSearchEngine();
+	InvertedIndex invertedIndex = new InvertedIndex();
+	int countMore = 0;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -50,7 +55,6 @@ public class GUI implements ActionListener {
 		userText = new JTextField(20);
 		userText.setBounds(270, 70, 165, 25);
 		panel.add(userText);
-		frame.setVisible(true);
 
 		// Search Button
 		btn = new JButton("Search");
@@ -60,23 +64,76 @@ public class GUI implements ActionListener {
 
 		// message after button clicked
 		display = new JLabel();
-		display.setBounds(10, 120, 500, 25);
+		display.setBounds(10, 110, 500, 200);
 		panel.add(display);
+
+		display1 = new JLabel();
+		display1.setBounds(10, 350, 500, 25);
+		panel.add(display1);
+
+		frame.setVisible(true);
+		yes = new JTextField(2);
+		yes.setBounds(200, 350, 50, 25);
+		panel.add(yes);
+
+		btn1 = new JButton("moreResults");
+		btn1.setBounds(260, 350, 20, 25);
+		btn1.addActionListener(new GUI());
+		panel.add(btn1);
+
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		String[] testDate = { "Deepanshu", "Shah", "kshitij", "halankar" };
-		String userEnteredString = userText.getText();
-		for (int i = 0; i < testDate.length; i++) {
-			if (userEnteredString == testDate[i]) {
-				display.setText("String Matched");
-			} else {
-				System.out.println("Did you mean: " + testDate[i]);
-			}
-		}
+		if (((AbstractButton) e.getSource()).getText().equals("Search")) {
+			String searchWord = userText.getText();
 
+			ArrayList<LinkIndex> outputLinks = wb.search(invertedIndex, searchWord);
+
+			String op = "<html>";
+			for (LinkIndex link : outputLinks) {
+				op = op + "<br><br>" + link.url + "-----" + link.frequency;
+				System.out.println("maal:" + link.url);
+				// display1.setText(link.url);
+			}
+			op += "</html>";
+			System.out.println(op);
+
+			display.setText(op);
+			display1.setText("Do you want more results? (y/n)");
+		}
+		if (((AbstractButton) e.getSource()).getText().equals("moreResults")) {
+			// while (true) {
+
+			// System.out.println("Do you want more results? (y/n)");
+
+			String more = yes.getText();
+			String searchWord = userText.getText();
+
+			if (more.equals("y")) {
+				countMore += 5;
+				System.out.println(searchWord);
+				String op = "<html>";
+				ArrayList<LinkIndex> outputLinks = wb.searchInCache(invertedIndex, searchWord, true, countMore);
+				if (outputLinks == null) {
+					display.setText("No more results");
+				} else {
+					for (LinkIndex link : outputLinks) {
+						op = op + "<br><br>" + link.url + "-----" + link.frequency;
+						System.out.println("maal:" + link.url);
+						// display1.setText(link.url);
+					}
+					op += "</html>";
+					System.out.println(op);
+
+					display.setText(op);
+				}
+
+				// }
+			}
+
+		}
 	}
 
 }
