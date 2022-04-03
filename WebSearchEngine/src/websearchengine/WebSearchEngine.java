@@ -86,8 +86,12 @@ public class WebSearchEngine {
 //			System.out.println("File not found");
 			crawl(invertedIndex);
 		}
+		invertedIndex.trie = inputTrie;
 		try {
 			dictionary = invertedIndex.getDictionary();
+			if (dictionary == null || dictionary.isEmpty()) {
+				dictionary = invertedIndex.createDictionary();
+			}
 		} catch (Exception ex) {
 			if (dictionary == null || dictionary.isEmpty()) {
 				dictionary = invertedIndex.createDictionary();
@@ -127,21 +131,23 @@ public class WebSearchEngine {
 			}
 			if (noMoreResults)
 				System.out.println("No more results.");
-		} else {
-			checkSpelling(dictionary, searchWord);
 		}
+//		else {
+//			checkSpelling(dictionary, searchWord);
+//		}
 		return (tempMap2 != null && !tempMap2.isEmpty()) ? tempMap2 : null;
 	}
 
 	// if not found dictionary - spell check using edit distance
-	public void checkSpelling(ArrayList<String> dictionary, String searchWord) {
+	public ArrayList<String> checkSpelling(ArrayList<String> dictionary, String searchWord) {
 		ArrayList<String> finallist = new ArrayList<>();
-		Editdistance editdistance = new Editdistance();
+//		Editdistance editdistance = new Editdistance();
 		finallist = Editdistance.searching(dictionary, searchWord);
-		System.out.println("This word is not present in the dictionary, some suggested words are given below ");
-		for (String a : finallist) {
-			System.out.println(a);
-		}
+//		System.out.println("This word is not present in the dictionary, some suggested words are given below ");
+//		for (String a : finallist) {
+//			System.out.println(a);
+//		}
+		return finallist;
 	}
 
 }
