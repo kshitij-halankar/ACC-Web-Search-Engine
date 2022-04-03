@@ -12,29 +12,11 @@ public class Cache {
 
 	public static ArrayList<CacheObject> searchCache = new ArrayList<>(MAX_CACHE_SIZE);
 
-//	public boolean searchCache(String searchWord) {
-//		for (CacheObject co : searchCache) {
-//			if (co.getCacheWord().equalsIgnoreCase(searchWord)) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-
-//	public static void main (String args[]) {
-//		ArrayList<String> a = new ArrayList<>();
-//		a.add("q");
-//		a.add("w");
-//		a.add("e");
-//		a.add("r");
-//		a.add(0,"c");
-//		for(String b : a)
-//			System.out.println(b+""+a.indexOf(b));
-//	}
-
 	public ArrayList<LinkIndex> fetchCache(String searchWord) {
+		BoyerMoore booyermoore = new BoyerMoore(searchWord);
 		for (CacheObject cacheObj : searchCache) {
-			if (cacheObj.getCacheWord().equalsIgnoreCase(searchWord)) {
+			int offset = booyermoore.search(cacheObj.getCacheWord());
+			if (offset < cacheObj.getCacheWord().length()) {
 				return cacheObj.getCachedLinks();
 			}
 		}
