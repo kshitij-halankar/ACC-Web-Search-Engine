@@ -33,6 +33,7 @@ public class WebSearchEngine {
 			System.exit(0);
 		}
 		String[] searchWords = searchWord.split("\\W+");
+		searchWord = searchWords[0];
 		ArrayList<LinkIndex> outputLinks = searchInCache(invertedIndex, searchWord, false, 0);
 		return outputLinks;
 
