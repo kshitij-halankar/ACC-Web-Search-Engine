@@ -14,10 +14,13 @@ public class Cache {
 
 	public ArrayList<LinkIndex> fetchCache(String searchWord) {
 		BoyerMoore booyermoore = new BoyerMoore(searchWord);
+//		int wordLength = searchWord.length();
 		for (CacheObject cacheObj : searchCache) {
+//			if (wordLength == cacheObj.getCacheWord().length()) {
 			int offset = booyermoore.search(cacheObj.getCacheWord());
 			if (offset < cacheObj.getCacheWord().length()) {
 				return cacheObj.getCachedLinks();
+//			}
 			}
 		}
 		return null;
